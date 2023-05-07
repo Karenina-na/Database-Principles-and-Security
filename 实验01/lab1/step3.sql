@@ -1,3 +1,6 @@
+-- 使用数据库
+use lab1;
+
 -- 查询全部课程
 select * from Course;
 

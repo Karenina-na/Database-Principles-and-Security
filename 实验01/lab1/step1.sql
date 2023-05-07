@@ -1,8 +1,11 @@
+-- 如果数据库存在则删除数据库
+drop database if exists lab1;
+
 -- 创建数据库
-create database lab;
+create database lab1;
 
 -- 使用数据库
-use lab;
+use lab1;
 
 -- 创建表
 /* Student (Sno(char(5))、Sname(Varchar(8))、Ssex(bit)、SbirthDay(smalldatetime)、Sdept(Varchar(30))、SBirthPlace(Varchar(50))))*/
