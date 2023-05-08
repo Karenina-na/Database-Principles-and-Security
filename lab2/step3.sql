@@ -12,13 +12,14 @@ select S.Sno from Student as S intersect select SC.Sno from SC; -- ×Ô¶¯È¥³ıÖØ¸´µ
 -- ²î
 select S.Sno from Student as S except select SC.Sno from SC; -- ×Ô¶¯È¥³ıÖØ¸´µÄĞĞ 13ÌõÊı¾İ
 
--- ¹ãÒåµÑ¿¨¶û»ı
-select * from Student,SC,Course;
+-- ¹ãÒåµÑ¿¨¶û»ı Á½Ê½µÈ¼Û
+select * from Student cross join Course cross join SC;
+-- select * from Student,SC,Course;
 
 /* ×¨ÃÅ¹ØÏµÔËËã */
 
 -- Ñ¡Ôñ
-select S.Sname from Student as S where S.Sno=10001; -- Ñ¡ÔñÑ§Éú±íÖĞÑ§ºÅÎª10001µÄÑ§ÉúµÄÃû×Ö
+select * from Student as S where S.Sno=10001; -- Ñ¡ÔñÑ§Éú±íÖĞÑ§ºÅÎª10001µÄÑ§ÉúµÄĞÅÏ¢
 
 -- Í¶Ó°
 select S.Sno,S.Sname from Student as S; -- Ñ¡ÔñÑ§Éú±íÖĞµÄÑ§ºÅÁĞºÍÃû×ÖÁĞ
@@ -27,6 +28,30 @@ select S.Sno,S.Sname from Student as S; -- Ñ¡ÔñÑ§Éú±íÖĞµÄÑ§ºÅÁĞºÍÃû×ÖÁĞ
 select distinct S.Sno,S.Sname,S.Ssex,S.SbirthDay,S.Sdept,S.SBirthPlace,SC.Cno,SC.Grade from Student as S inner join SC on S.Sno=SC.Sno; -- Ê¹ÓÃinner join onÄ£Äâ×ÔÈ»Á¬½Ó distinctÈ¥ÖØ
 
 -- µÈÖµÁ¬½Ó
-select * from Student as S inner join SC on S.Sno=SC.Sno;
+select * from Student as S inner join SC on S.Sno=SC.Sno;	-- Ñ¡ÔñÑ§Éú±íºÍÑ¡¿Î±íÖĞÏàÍ¬Ñ§ºÅÑ§ÉúµÄĞÅÏ¢
 
 -- Ò»°ãÁ¬½Ó
+select S.Sno from Student as S inner join SC on S.Sno=SC.Sno; -- ÓĞÌõ¼şµÄÁ¬½Ó Ñ¡ÔñÑ§Éú±íºÍÑ¡¿Î±íÖĞÏàÍ¬Ñ§ºÅÑ§ÉúµÄĞÕÃû
+
+-- ×óÍâÁ¬½Ó
+select * from Student as S left join SC on S.Sno=SC.Sno; -- Á¬½ÓÑ§Éú±íºÍÑ¡¿Î±í£¬Ñ§Éú±íÖĞµÄĞü¸¡Ôª×é±£´æ
+
+-- ÓÒÍâÁ¬½Ó
+select * from SC right join Course as C on SC.Cno=C.Cno; -- Á¬½ÓÑ¡¿Î±íºÍ¿Î³Ì±í£¬¿Î³Ì±íÖĞµÄĞü¸¡Ôª×é±£´æ
+
+-- È«Á¬½Ó
+select * from Student as S full join Course as C on S.Sno=C.Cno; -- Á¬½ÓÑ§Éú±íºÍÑ¡¿Î±í£¬Á½ÕßµÄĞü¸¡Ôª×é¾ù±£´æ£¬ÕâÀï¶şÕßÁ¬½ÓÌõ¼ş¿ÉÖªÁ½±í¾ùÈ«ÎªĞü¸¡Ôª×é
+
+
+/* ¹ãÒåµÑ¿¨¶û»ıºÍÁ¬½ÓµÄ¸ÅÄî */
+-- ¹ãÒåµÑ¿¨¶û»ıÏÂÁĞÁ½Ê½µÈ¼Û
+select * from Student,Course,SC; -- ÎŞÌõ¼ş¶à±í²éÑ¯
+select * from Student cross join Course cross join SC; -- ÎŞÌõ¼şÈ«Á¬½Ó
+
+/*
+¹ãÒåµÑ¿¨¶û»ıÎªÎŞÌõ¼şµÄÅÅÁĞ×éºÏ£¬Ò»°ãÁ¬½ÓÎªÓĞÌõ¼şµÄ¶à±íÁ¬½Ó£¬ÎŞÌõ¼şµÄÈ«Á¬½ÓµÃµ½µÄ½á¹ûÓë¹ãÒåµÑ¿¨¶û»ıÏàÍ¬
+ÔÚ SQL ÖĞ£¬¹ãÒåµÑ¿¨¶û»ıºÍÁ¬½Ó¶¼ÊÇÓÃÓÚÁª½á¶à¸ö±í¸ñµÄ²Ù×÷£¬µ«ËüÃÇµÄÊµÏÖ·½Ê½ºÍ½á¹ûÂÔÓĞ²»Í¬¡£
+¹ãÒåµÑ¿¨¶û»ıÊÇÒ»ÖÖÎŞÌõ¼şµÄÁª½á²Ù×÷£¬Ëü»á·µ»ØËùÓĞ±í¸ñÖ®¼äµÄÅÅÁĞ×éºÏ£¬²»ĞèÒªÖ¸¶¨ÈÎºÎÌõ¼ş¡£ÔÚ SQL ÖĞ£¬¿ÉÒÔÊ¹ÓÃ¶ººÅ·Ö¸ô¶à¸ö±í¸ñ£¬»òÕßÊ¹ÓÃ CROSS JOIN ¹Ø¼ü×ÖÀ´±íÊ¾¹ãÒåµÑ¿¨¶û»ı¡£
+Á¬½ÓÊÇÒ»ÖÖÓĞÌõ¼şµÄÁª½á²Ù×÷£¬Ëü»á¸ù¾İÖ¸¶¨µÄÁª½áÌõ¼ş£¬´Ó¶à¸ö±í¸ñÖĞÉ¸Ñ¡³öÂú×ãÌõ¼şµÄĞĞ¡£ÔÚ SQL ÖĞ£¬¿ÉÒÔÊ¹ÓÃ INNER JOIN¡¢LEFT JOIN¡¢RIGHT JOIN µÈ¹Ø¼ü×ÖÀ´±íÊ¾Á¬½Ó¡£
+ĞèÒª×¢ÒâµÄÊÇ£¬È«Á¬½ÓÊÇÁ¬½ÓµÄÒ»ÖÖÌØÊâÇé¿ö£¬Ëü»á·µ»ØÁ½¸ö±í¸ñÖĞµÄËùÓĞĞĞ£¬²»ÂÛÊÇ·ñÂú×ãÁª½áÌõ¼ş¡£µ±Á¬½ÓÌõ¼şÎª¿ÕÊ±£¬È«Á¬½Ó¿ÉÒÔ¿´×÷ÊÇÎŞÌõ¼şÁ¬½Ó£¬½á¹ûµÈÍ¬ÓÚ¹ãÒåµÑ¿¨¶û»ı¡£µ«ÔÚÊµ¼ÊµÄÓ¦ÓÃÖĞ£¬È«Á¬½ÓºÍ¹ãÒåµÑ¿¨¶û»ıµÄÊ¹ÓÃ³¡¾°ºÍÓïÒåÊÇÓĞÇø±ğµÄ¡£
+*/
