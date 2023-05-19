@@ -6,7 +6,7 @@ use MY_DBMS;
 insert into Student(Sno,Sname,Ssex,Sage,Sdept,Sbirth) values
 ('001', '张三', '男', 18, 'CS', '2000-01-01'), 
 ('002', '李四', '女', 19, 'MA', '1999-02-02'),
-('003', '薛五', '男', 20, 'AC', '1998-03-03'),
+('003', '薛宝五', '男', 20, 'AC', '1998-03-03'),
 ('004', '欧六', '女', 21, 'CS', '1997-04-04'),
 ('005', '欧阳七', '男', 22, 'MA', '1996-05-05'),
 ('006', '杨八', '女', 23, 'AC', '1995-06-06'),
@@ -48,7 +48,16 @@ insert into Course (Cno,Cname,CCredit,Cpno,CRemark) values
 ('C018', '社会学', 4.5, NULL, 'Introduction to Sociology'),
 ('C019', '心理学', 2.0, NULL, 'Introduction to Psychology'),
 ('C020', '人类学', 3.0, NULL, 'Introduction to Anthropology'), 
-('C021', '历史', 4.0, NULL, 'Modern World History') 
+('C021', '历史', 4.0, NULL, 'Modern World History') ,
+('C022', 'math', 4.5, NULL, 'Introduction to Mathematics'), 
+('C023', 'DB_security', 3.0, NULL, 'Introduction to Computer Science'),
+('C024', 'BASys', 3.0, NULL, 'Course BASys'),
+('C025', 'BSys', 3.0, NULL, 'Course BSys'),
+('C026', 'T_CM',  4.0, NULL, 'Course T_CM'),   
+('C027', 'M_TC', 4.5, NULL, 'Course M_TC'),
+('C028', 'MCTC', 4.5, '数学', 'Course MCTC'),
+('C029', 'MEAF', 4.5, '数学', 'Course MEAF');
+
 
 -- 选课表，注意这里的Sno和Cno必须在Student和Course表中存在数据
 insert into SC(Sno,Cno,Grade) values
