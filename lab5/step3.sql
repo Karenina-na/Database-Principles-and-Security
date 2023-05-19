@@ -76,4 +76,4 @@ select SC.Cno,count(Sno) as num from SC group by SC.Cno order by num desc,avg(SC
 select SC.Sno,count(SC.Cno),avg(SC.Grade) from SC group by SC.Sno having count(SC.Cno)>2 order by count(SC.Cno) desc,avg(SC.Grade);
 
 -- 查询有 2 门以上课程在 80 分以上的学生的学号及 80 分以上的课程数。查询结果按 80 分以上的课程数降序排列。如果有课程数相同的，按所选全部课程数升序排列。
-select SC.Sno,count(SC.Cno) as num from SC group by SC.Sno;
+select T.Sno,count(T.Cno) as num from (select SC.Sno,SC.Cno from SC where SC.Grade>80) as T group by T.Sno having count(T.Cno)>2 order by num desc,(select count(SC.Cno) from SC where SC.Sno=T.Sno);
