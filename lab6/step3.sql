@@ -7,7 +7,7 @@ insert into Course (Cno,Cname,CCredit,Cpno,CRemark) values
 ('C001', '数学', 3.0, NULL, 'Introduction to Mathematics'), 
 ('C002', '物理', 4.5, '数学', 'Advanced Physics'),
 ('C003', '化学', 3.5, '物理', 'Basic Chemistry'),
-('C004', '计算机', 4.0, '数学', 'Advanced Biology '),
+('C004', '信息系统', 4.0, '数学', 'Advanced Biology '),
 ('C005', '数据库', 3.0, '数学', 'Introduction to Computer Science'),
 ('C006', '英语', 2.0, NULL, 'English Composition'),
 ('C007', '汉语', 3.0, NULL, 'Chinese Language'),
