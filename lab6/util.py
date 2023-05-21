@@ -25,7 +25,7 @@ def createAge():
 # 构造sql数据
 sql = "insert into Student values \n"
 for student in class_info.values:
-    sql += "('%s','%s','%s',%i,'%s', '%s', '%s') \n" % \
+    sql += "('%s','%s','%s',%i,'%s', '%s', '%s'), \n" % \
     (student[0], student[1], student[2], createAge(), student[4]+"-"+student[3], createBirthPlace(), createBirth())
 
 # 保存sql txt
