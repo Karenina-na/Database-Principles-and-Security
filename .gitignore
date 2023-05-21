@@ -5,3 +5,4 @@ db/
 /test.go
 
 **/**.xlsx
+**/**.txt
