@@ -1,1 +1,7 @@
-**/**.csv
+log/
+.idea/
+bin/
+db/
+/test.go
+
+**/**.xlsx
