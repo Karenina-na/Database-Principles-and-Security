@@ -80,3 +80,25 @@ select SC.Sno from SC where exists (select SC_01.Cno from SC as SC_01 where SC_0
 
 -- 查询所有存在不及格情况 (<60) 的学生的学号和姓名。
 select S.Sno,S.Sname from Student as S where exists (select * from SC where S.Sno=SC.Sno and  SC.Grade<60)
+
+-- 集合查询
+-- 并操作
+-- 查询学生关系表中，学号以 8 结尾和以 0 结尾的学生的基本信息。
+select * from Student as S where S.Sno like '%8' union select * from Student as S where S.Sno like '%0'
+
+-- 查询选课关系表中，成绩是 100 分或者成绩是 0分的记录。
+select * from SC where SC.Grade=100 union select * from SC where SC.Grade=0
+
+-- 交操作
+-- 查询系别为自动化学院信息安全系的姓张的所有男性同学的基本信息。
+select * from Student as S where S.Sdept='SC012102-信息安全' intersect select * from Student as S where S.Sname like '张%' intersect select * from Student as S where S.Ssex='男';
+
+-- 查询课程表中学分大于 3 分并且课号是以 0 结尾的课程。
+select C.Cno,C.Cname,C.CCredit,C.Cpno from Course as C where C.CCredit>3 intersect select C.Cno,C.Cname,C.CCredit,C.Cpno from Course as C where C.Cno like '%0'
+
+-- 差操作
+-- 查询“网络空间安全学院”所有除去陕西出生地的学生的基本信息。
+select * from Student as S where S.Sdept='SC012102-信息安全' except select * from Student as S where S.Sbirthplace='西安';
+
+-- 查询选课关系表中成绩未及格 (<60 分) 的学生学号。
+select distinct R.Sno  from (select * from SC except select * from SC where SC.Grade>60) as R

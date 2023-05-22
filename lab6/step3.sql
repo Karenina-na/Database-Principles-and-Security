@@ -13,7 +13,7 @@ insert into Course (Cno,Cname,CCredit,Cpno,CRemark) values
 ('C007', '∫∫”Ô', 3.0, NULL, 'Chinese Language'),
 ('C008', '»’”Ô', 4.0, '”¢”Ô', 'Beginner Japanese'),
 ('C009', '∑®”Ô', 3.5, '”¢”Ô', 'French Language'),
-('C010', 'Œ˜∞‡—¿”Ô',2.0, '”¢”Ô', 'Spanish 101'),
+('C010', 'Œ˜∞‡—¿”Ô',4.0, '”¢”Ô', 'Spanish 101'),
 ('C011', 'µ¬”Ô', 4.5, '”¢”Ô','German 101'),
 ('C012', '∂Ì”Ô', 3.0, '”¢”Ô', 'Russian 101'),
 ('C013', '“‚¥Û¿˚”Ô', 2.5, '∑®”Ô', 'Italian 101')
