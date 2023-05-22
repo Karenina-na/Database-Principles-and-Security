@@ -72,7 +72,7 @@ select * from Student as S where (select avg(SC_ONE.Grade) from SC as SC_ONE whe
 select S.Sname from Student as S where exists (select * from SC where SC.Sno=S.Sno)
 
 -- 查询选修了全部课程的学生姓名，
-select S.Sno from Student as S where not exists (select S_NO.Sno,C.Cno from Student as S_NO,Course as C where S_NO.Sno=S.Sno and not exists (select * from Student as S_ALL join SC as SC_ALL on S_ALL.Sno=SC_ALL.Sno where S_NO.Sno=S_ALL.Sno and C.Cno=SC_ALL.Cno))
+select S.Sname from Student as S where not exists (select S_NO.Sno,C.Cno from Student as S_NO,Course as C where S_NO.Sno=S.Sno and not exists (select * from Student as S_ALL join SC as SC_ALL on S_ALL.Sno=SC_ALL.Sno where S_NO.Sno=S_ALL.Sno and C.Cno=SC_ALL.Cno))
 
 -- 查询至少选修了学号为 SO1 学生选修的全部课程的学生号码。
 select SC.Sno from SC where exists (select SC_01.Cno from SC as SC_01 where SC_01.Sno='2021SM001' and SC.Cno=SC_01.Cno) group by SC.Sno having count(SC.Cno)=(select count(SC.Cno) from SC where SC.Sno='2021SM001')
