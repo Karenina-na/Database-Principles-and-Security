@@ -1,0 +1,204 @@
+-- 创建带输入参数的存储过程: 输入系别及性别后，查询该系相应性别学生的选课情况。
+--create procedure SelectSCBySdeptAge	
+--	@Dept nvarchar(50),
+--	@Sex nvarchar(1)
+--as 
+--begin
+--	select S.Sno,S.Sname,S.Sage,S.Ssex,S.Sdept,C.Cno,C.Cname from Student as S join SC join Course as C on SC.Cno=C.Cno on S.Sno=SC.Sno where S.Ssex=@Sex and S.Sdept=@Dept;
+--end
+--exec dbo.SelectSCBySdeptAge @Dept='数学系',@Sex='男';
+
+-- 创建带输入参数带默认值的存储过程: 输入系别及性别后，查询该系相应性别学生的选课情况。如果不输入学生的性别，则默认查询该系男生的选课情况
+--create procedure SelectSCBySdeptAgeDefault	
+--	@Dept nvarchar(50),
+--	@Sex nvarchar(1)='男'
+--as 
+--begin
+--	select S.Sno,S.Sname,S.Sage,S.Ssex,S.Sdept,C.Cno,C.Cname from Student as S join SC join Course as C on SC.Cno=C.Cno on S.Sno=SC.Sno where S.Ssex=@Sex and S.Sdept=@Dept;
+--end
+--exec dbo.SelectSCBySdeptAgeDefault @Dept='数学系',@Sex='女';
+--exec dbo.SelectSCBySdeptAgeDefault @Dept='数学系';
+
+-- 创建带输入参数的存储过程: 完成输入一个学号，如果该学号存在，则显示:该学号存在，同时显示该学生的学号、该学生所在系的学生人数。否则显示:该学号 XXXXX 不存在; 同时显示全部有效的学号清单
+--create procedure SelectSnoBySno
+--	@Sno nchar(10)
+--as
+--begin
+--	if exists (select 1 from Student where Student.Sno=@Sno)
+--	begin
+--		print'该学号存在';
+--		select S.Sno,count(distinct S_other.Sno) as DeptNum from Student as S join Student as S_other on S.Sdept=S_other.Sdept group by S.Sno having S.Sno=@Sno;
+--	end
+--	else
+--	begin
+--		print'该学号'+@Sno+'不存在';
+--		select S.Sno from Student as S;
+--	end
+--end
+--exec dbo.SelectSnoBySno @Sno='2021303127';
+--exec dbo.SelectSnoBySno @Sno='asdfasdf';
+
+-- 创建一个存储过程，且该存储过程带输入参数:完成向表 SC 插入:学号、课号，分数。
+  -- 如果学号在学生表中不存在，则提示: 所输入学号 XXX 在学生表中不存在
+  -- 如果课号在课程表中不存在，则提示: 所输入课号 XXX 在课程表中不存在
+  -- 如果所输入学号与课号均不存在，则提示: 所输入学号 XXX 在学生表中不存在且所输入课号 XXX 在课程表中也不存在
+  -- 如果学号与课号均存在，且成功插入，则显示: 所输入的信息:《学号 XXX课程号 XXX，分数 XX》已插入到表中。
+--create procedure InsertSCSnoCnoGrade
+--	@Sno nchar(10),
+--	@Cno nvarchar(50),
+--	@Grade numeric(4,1)
+--as
+--begin
+--	if not exists (select 1 from Student as S where S.Sno=@Sno) and not exists (select 1 from Course as C where C.Cno=@Cno)
+--	begin
+--		print'所输入学号'+@Sno+'在学生表中不存在且所输入课号'+@Cno+'在课程表中也不存在'
+--	end
+--	else if not exists (select 1 from Student as S where S.Sno=@Sno)
+--	begin
+--		print'所输入学号'+@Sno+'在学生表中不存在'
+--	end
+--	else if not exists (select 1 from Course as C where C.Cno=@Cno)
+--	begin
+--		print'所输入课号'+@Cno+'在课程表中不存在'
+--	end
+--	else
+--	begin
+--		insert SC values (@Sno,@Cno,@Grade)
+--		print'所输入的信息:《学号 '+@Sno+'课程号 '+@Cno+'，分数 '+convert(nvarchar(4), @Grade)+'》已插入到表中。'
+--	end
+--end
+--exec dbo.InsertSCSnoCnoGrade @Sno='2021SM007',@Cno='C003',@Grade=98.5;
+--exec dbo.InsertSCSnoCnoGrade @Sno='123123',@Cno='C003',@Grade=98.5;
+--exec dbo.InsertSCSnoCnoGrade @Sno='2021SM007',@Cno='123123',@Grade=98.5;
+--exec dbo.InsertSCSnoCnoGrade @Sno='123123',@Cno='123123',@Grade=98.5;
+
+-- 创建一存储过程,输入学生的学号,将该学生所选的所有课程的分数增加 1分。
+--create procedure AddAllCourseGradeBySno
+--	@Sno nchar(10)
+--as
+--begin
+--	update SC set Grade=Grade+1 where SC.Sno=@Sno;
+--end
+--exec AddAllCourseGradeBySno @Sno = '2021303127';
+--select * from SC where Sno='2021303127'
+
+-- 创建一个加密存储过程，且该存储过程带输入参数: 完成输入一个学号，如果该学号存在，则显示: 该学号存在，并显示该学生的学号、姓名、所选修课程的课程数、所选课程的平均成绩。否则显示: 该学号不存在(显示出学号)
+--create procedure EncryptedSelectStudentInfo
+--	@Sno nchar(10)
+--as 
+--begin
+--	declare @EncryptSno varbinary(8000),@EncryptSname varbinary(8000),@EncryptCountCourse varbinary(8000),@EncryptAvgCourseGrade varbinary(8000);
+--	declare @SecretPassphrase nvarchar(50) = 'MySecretPassphrase'
+--	if exists (select 1 from Student as S where S.Sno=@Sno)
+--	begin
+--        set @EncryptSno = ENCRYPTBYPASSPHRASE(@SecretPassphrase, @Sno);
+--        set @EncryptSname = ENCRYPTBYPASSPHRASE(@SecretPassphrase, convert(nvarchar(50),(select Sname from Student where Sno = @Sno)));
+--        set @EncryptCountCourse = ENCRYPTBYPASSPHRASE(@SecretPassphrase, convert(nvarchar(10),(select count(*) from SC where Sno = @Sno)));
+--        set @EncryptAvgCourseGrade = ENCRYPTBYPASSPHRASE(@SecretPassphrase, convert(nvarchar(10),(select avg(Grade) from SC where Sno = @Sno)));
+--		--select '该学号存在' as status,convert(nvarchar(100),@EncryptSno) as EncryptSno,convert(nvarchar(100),@EncryptSname) as EncryptSname,convert(nvarchar(100),@EncryptCountCourse) as EncryptCountCourse,convert(nvarchar(100),@EncryptAvgCourseGrade) as EncryptAvgCourseGrade
+--        select '该学号存在' as status,@EncryptSno as EncryptSno,@EncryptSname as EncryptSname,@EncryptCountCourse as EncryptCountCourse,@EncryptAvgCourseGrade as EncryptAvgCourseGrade
+		
+--	end
+--	else
+--	begin
+--		print'该学号不存在:'+@Sno;
+--	end
+--end
+--exec EncryptedSelectStudentInfo @Sno='2021303127';
+--exec EncryptedSelectStudentInfo @Sno='aaaa';
+
+-- [选做] 创建带输入参数的存储过程: 完成输入一个学号，如果该学号存在则显示: 
+-- 该学号存在，并显示该学生的学号、所选修课程的课程总数及课程清单、所选课程的平均成绩、
+-- 所选课程的最高分及最低分、所选课程不及格的课程数及课程清单(含各课程分数)。否则显示: 该学号不存在(显示出学号)
+--create procedure SelectStudentInfo
+--	@Sno nchar(10)
+--as 
+--begin
+--	if exists (select 1 from Student as S where S.Sno=@Sno)
+--	begin
+--		declare @CourseCount int;
+--		declare @AvgGrade numeric(4,1);
+--		declare @MaxGrade numeric(4,1);
+--		declare @MinGrade numeric(4,1);
+--		declare @DownCourseCount int;
+--		set @CourseCount = (select count(distinct SC.Cno) from SC group by SC.Sno having SC.Sno=@Sno)
+--		set @AvgGrade = (select avg(SC.Grade) from SC group by SC.Sno having SC.Sno=@Sno)
+--		set @MaxGrade = (select max(SC.Grade) from SC group by SC.Sno having SC.Sno=@Sno)
+--		set @MinGrade = (select min(SC.Grade) from SC group by SC.Sno having SC.Sno=@Sno)
+--		set @DownCourseCount = (select count(distinct SC.Cno) from SC where SC.Grade<60 group by SC.Sno having SC.Sno=@Sno)
+--		select @CourseCount as CourseCount,@AvgGrade as AvgGrade,@MaxGrade as MaxGrade,@MinGrade as MinGrade,@DownCourseCount as NoPassCourseCount;
+--		select C.Cno,C.Cname from Course as C join SC on C.Cno=SC.Cno where SC.Sno=@Sno;
+--		select C.Cno,C.Cname from Course as C join SC on C.Cno=SC.Cno where SC.Sno=@Sno and SC.Grade<60;
+--	end
+--	else
+--	begin
+--		print'该学号不存在:'+@Sno;
+--	end
+--end
+--exec SelectStudentInfo @Sno='2021303119';
+--exec SelectStudentInfo @Sno='2021303127';
+
+-- [选做]创建一存储过程，输入学生的学号，删除该学生的选课信息及学生表中的记录信息。
+-- [选做]创建一个加密存储过程，且该存储过程带输入参数: 完成输入一个学号，如果该学号存在，则显示: 该学号存在，并显示该学生所在系的所有学生的学号、姓名、所选修课程的课程数、所选课程的平均成绩，并按学号排序否则显示: 该学号不存在(显示出学号)
+
+-- 掌握以下常用的系统存储过程
+-- Sp help
+-- Sp renamedb
+-- Sp rename
+-- Sp who
+-- Sp depends
+-- Sp helptext
+-- sp addapprole 在数据库里增加一个特殊的应用程序角色
+-- sp extendedproc 在系统中增加一个新的扩展存储过程
+-- sp addgroup 在当前数据库中增加一个组
+-- sp addlogin 创建一个新的 login 帐户
+-- sp addmessage 在系统中增加一个新的错误信息
+-- sp addrole 在当前数据库中增加一人角色
+-- sp addrolemember 为当前数据库中的一个角色增加一个安全性账户
+-- sp addsrvrolemember 为固定的服务器角色增加一个成员
+-- sp addtype 创建一个用户定义的数据类型
+-- sp addumpdevice 增加一个设备备份
+-- sp attach db 增加数据库到一个服务器中
+-- sp bindefault 把缺省绑定到列或者用户定义的数据类型
+-- sp bingrule 把规则绑定到列或者用户定义的数据类型上
+-- sp changeobjectowner 改变对象的所有者
+-- sp_column privileges 返回列的权限信息
+-- sp_configure 显示或者修改当前服务器的全局配置
+-- sp createstats 创建单列的统计信息
+-- sp cursorclose 关闭和释放游标
+-- sp database 列出当前系统中的数据库
+-- sp dboption 显示和修改数据库选项
+-- sp dbremove 删除数据库和该数据库相关的文件
+-- sp defaultdb 设置登陆帐户的默认数据库
+-- sp delete targetservergroup 删除指定目标服务器组
+-- sp delete targetsvrgrp member 从目标服务器组中删除指定的服务器
+-- sp depends 显示数据库对象的依赖信息
+-- sp detach db 分离服务器中的数据库
+-- sp foreignkeys 返回参看连接服务器的表的主健的外键
+-- sp_grantaccess 在当前数据库中增加一个安全性用户
+-- sp grantlogin 允许 NT 用户或者组访问 SOL Serversp help 报告有关数据库对象的信息
+-- sp helpcontrain 返回有关约束的类型,名称等信息
+-- sp helpdb 返回执行数据库或者全部数据库信息
+-- sp helpdbfixedrole 返回固定的服务器角色列表
+-- sp helpdevice 返回有关数据库文件的信息
+-- sp helpextendedproc 返回当前定义的扩展存储过程信息
+-- sp helpfile 返回与当前数据库相关的物理文件信息
+-- sp helpgroup 返回当前数据库中的角色信息
+-- sp helpindex 返回有关表的索引信息
+-- sp helprole 返回当前数据库的角色信息
+-- sp helprolemember 返回当前数据库中角色成员的信息
+-- sp helptext 显示规则,缺省,存储过程,触发器,视图等对象的未加密的文本定义信息
+-- sp_helptrigger 显示触发器类型sp lock 返回有关锁的信息
+-- sp_primarykeys 返回主健列的信息
+-- sp recompile 使存储过程和触发器在下一次运行时重新编译
+-- sp rename 更改用户创建的数据库对象的名称
+-- sp renamedb 更改数据库的名称
+-- sp revokedbaccess 从当前数据库中删除安全性帐户
+-- sp runwebtask 执行以前版本中定义的 WEB 作业
+-- sp server info 返回系统的属性和匹配值
+-- sp spaceused 显示数据库空间的使用情况
+-- sp statistics 返回表中的所有索引列表
+-- sp stored procedures 返回环境中所有的存储过程列表
+-- sp_unbinddefault 从列或者用户定义的数据类型中解除缺省的绑定
+-- sp unbindrule 从列或者用户定义的数据类型中解除规则的绑定
+-- sp validname检查有效的系统帐户信息
