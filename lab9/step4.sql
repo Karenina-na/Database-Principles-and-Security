@@ -1,0 +1,118 @@
+--use SchoolManager;
+
+-- 在 SchoolManager 数据库中，为“学生表 S”创建触发器 tri_upd_S，其作用是当更改了学生的学号，其选课记录仍然与这个学生相关(即同时更改选课表相应的学号)
+-- {请分别用 AFTER/FOR 触发器及 INSTEAD OF 触发器予以实现}
+-- after/for
+--create trigger tri_upd_S on Student
+--after update as 
+--begin
+--	alter table SC nocheck constraint fk_Student;
+--	alter table SC nocheck constraint fk_Course;
+--	if update(Sno)
+--	begin
+--		declare @UpdateSno nchar(10);
+--		select @UpdateSno = (select Sno from inserted);
+--		declare @OldSno nchar(10);
+--		select @OldSno = (select Sno from deleted);
+--		update SC set Sno=@UpdateSno where Sno=@OldSno;
+--	end
+--	alter table SC check constraint fk_Course;
+--	alter table SC check constraint fk_Student;
+--end
+-- 外键约束，不能更改
+
+-- instead of
+--create trigger tri_upd_S on Student
+--instead of update as 
+--begin
+--	alter table SC nocheck constraint fk_Student;
+--	alter table SC nocheck constraint fk_Course;
+--	if update(Sno)
+--	begin
+--		update SC set Sno=inserted.Sno from SC,inserted,deleted where SC.Sno=deleted.Sno;
+--		update Student set Sno=inserted.Sno from Student,inserted,deleted where Student.Sno=deleted.Sno;
+--	end
+--	alter table SC check constraint fk_Course;
+--	alter table SC check constraint fk_Student;
+--end
+--select * from Student as S where S.Sno='2021303127';
+--select * from SC where SC.Sno='2021303127'
+--update Student set Sno='1234321' where Sno='2021303127'
+--select * from Student as S where S.Sno='1234321';
+--select * from SC where SC.Sno='1234321'
+
+
+-- 在 SchoolManager 数据库中，为“学生表 S”创建一个名为 tri_no_updSname_S 的UPDATE 触发器，其作用是当更新“S”表中的“Sname”字段时，提示:“不能修改学生姓名”，并取消修改操作。
+--create trigger tri_no_updSname_S on Student
+--instead of update as
+--begin
+--	if update(Sname)
+--	begin
+--		print'不能修改学生姓名';
+--	end
+--end
+--update Student set Sname='更改名字' where Sname='魏子翔';
+--select * from Student where Sname='魏子翔'
+
+-- 在SchoolManager 数据库中，为“学生表 S”创建触发器 tri_del_S，其作用是当该学生已经转校，在“s”表删除他的记录的同时，也删除他在“SC”表中的所有选课记录。
+--create trigger tri_del_S on Student
+--instead of delete as
+--begin
+--	declare @DeSno nchar(10) = (select Sno from deleted);
+--	delete from SC where SC.Sno=@DeSno;
+--	delete from Student where Student.Sno=@DeSno;
+--end
+--select * from Student where Student.Sno='2021SM007';
+--select * from SC where SC.Sno='2021SM007';
+--delete from Student where Sno='2021SM007';
+--select * from Student where Student.Sno='2021SM007';
+--select * from SC where SC.Sno='2021SM007';
+
+
+-- 在SchoolManager 数据库中，为“教学计划 C Plan”创建触发器一名 tri_ins_jxjh触发器，其作用是当在“教学计划 C_Plan”表中插入一条新记录时，同时在“教师任课 C_Teacher”表中自动添加相关的任课记录 (假设: 教师编号=“T2020’C Plan.课程号)
+-- {请分别用 AFTER/FOR 触发器及 INSTEAD OF 触发器予以实现}
+--create trigger tri_ins_jxjh on Course_Plan
+--instead of insert as
+--begin
+--	insert into Course_Plan(课程号,专业学级,专业代码,学年,开课学期,学生数) select 课程号,专业学级,专业代码,学年,开课学期,学生数 from inserted
+--	insert into Course_Teacher(教师编号,课程号,专业学级,专业代码,学年,学期,学生数) select 'T2020'+课程号,课程号,专业学级,专业代码,学年,开课学期,学生数 from inserted
+--end
+--select * from Course_Plan;
+--select * from Course_Teacher;
+--insert into Course_Plan values ('C001','21','C101','2022','4',54)
+--select * from Course_Plan;
+--select * from Course_Teacher;
+
+--create trigger tri_ins_jxjh on Course_Plan
+--after insert as
+--begin
+--	insert into Course_Teacher(教师编号,课程号,专业学级,专业代码,学年,学期,学生数) select 'T2020'+课程号,课程号,专业学级,专业代码,学年,开课学期,学生数 from inserted
+--end
+--select * from Course_Plan;
+--select * from Course_Teacher;
+--insert into Course_Plan values ('C001','21','C101','2022','4',54)
+--select * from Course_Plan;
+--select * from Course_Teacher;
+
+-- [选做] 在 SchoolManager数据库中，为“教学计划 C Plan”创建一名为del_tri_CourPlan 的触发器，其作用是: 当删除“C Plan”表中的某一记录时，同时在“任课教师表 C Teacher”表中删除与课程计划表中的 “C PIan.课程号”相关的任课教师记录。
+-- [请分别用 AFTER/FOR 触发器及 INSTEAD OF 触发器予以实现
+--create trigger del_tri_CourPlan on Course_Plan
+--instead of delete as
+--begin
+--	delete from Course_Plan where Course_Plan.课程号 in (select 课程号 from deleted);
+--	delete from Course_Teacher where  Course_Teacher.课程号 in (select 课程号 from deleted);
+--end
+--select * from Course_Plan;
+--select * from Course_Teacher;
+--delete from Course_Plan where Course_Plan.课程号='C001'
+--select * from Course_Plan;
+--select * from Course_Teacher;
+
+-- [选做]在 SchoolManager 数据库中，为“教学计划 C Plan”表创建一名为tri_no_updCno 的触发器，其作用是当修改“C Plan”表中“课程号”字段时，提示不能修改，并取消修改操作。
+-- [请分别用 AFTER/FOR 触发器及 INSTEAD OF 触发器予以实现
+-- [选做]为 SchoolManager 数据库创建一名为 tri_no_Drop_SMDB 的触发器，其作用是当删除“SchoolManager”数据库时，提示:“不能删除数据库 SchoolManager并取消删除操作。
+
+-- sp helptext 触发器名查看触发器的文本信息
+-- sp depends 触发器名查看触发器的相关性
+-- sp help 触发器名一一查看触发器的一般信息
+-- sp helptrigger 表名一查看表的触发器信息
