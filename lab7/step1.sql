@@ -1,10 +1,10 @@
 -- 如果数据库存在则删除数据库
-drop database if exists MY_DBMS;
+drop database if exists MyDataBase ;
 
 -- 创建数据库
-create database MY_DBMS;
+create database MyDataBase ;
 
-use MY_DBMS;
+use MyDataBase ;
 
 -- 创建表
 create table Student (

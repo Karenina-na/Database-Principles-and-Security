@@ -1,3 +1,5 @@
+use MyDataBase;
+
 -- 创建带输入参数的存储过程: 输入系别及性别后，查询该系相应性别学生的选课情况。
 --create procedure SelectSCBySdeptAge	
 --	@Dept nvarchar(50),

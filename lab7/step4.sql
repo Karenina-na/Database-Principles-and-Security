@@ -1,5 +1,5 @@
 
--- use MY_DBMS;
+-- use MyDataBase;
 -- 注意，视图操作必须是批处理仅有的语句
 
 -- 定义视图

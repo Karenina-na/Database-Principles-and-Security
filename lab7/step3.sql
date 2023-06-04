@@ -1,4 +1,4 @@
-use MY_DBMS;
+use MyDataBase;
 
 -- Ñ§Éú±í: ...
 
