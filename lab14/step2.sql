@@ -90,7 +90,7 @@ use master;
 --restore database Study from disk='C:\Users\15399\Desktop\数据库原理与安全\test\data.bak' with norecovery, replace;
 --restore log Study from disk='C:\Users\15399\Desktop\数据库原理与安全\test\dataLog.bak' with recovery;
 
-use Study;
+--use Study;
 
 -- 修改审核规范 ServerAuditSpecification2，仅对3类事件进行审计，但另外增加对“对 STUDY 数据库中特定角色架构中所有对象的 DML(创建、修改、删除)操作”事件的审计(修改前先禁用该审核规范，修改完成后再启动) ，并验证是否修改成功 (通过查看审核记录)。
 --alter database audit specification DatabaseAuditSpecification2 with(state = off);
