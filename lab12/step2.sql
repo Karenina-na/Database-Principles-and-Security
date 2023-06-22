@@ -48,7 +48,7 @@
 --restore log Study from MyDbLogbackup with recovery;
 
 -- 直接指定
--- restore log Study from disk='C:\Users\15399\Desktop\数据库原理与安全\test\MyDbLogbackup.bak' with norecovery , replace;
+-- restore log Study from disk='C:\Users\15399\Desktop\数据库原理与安全\test\MyDbLogbackup.bak' with recovery , replace;
 
 --use Study;
 --select * from S;
